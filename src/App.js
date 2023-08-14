@@ -1,25 +1,45 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { Component } from "react";
+import Ipod from "./Component/ipod";
+import zingtouch from 'zingtouch';
+import appStyle from './index.module.css';
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+export default class App extends Component {
+  constructor(props) {
+    super(props);
+    this.touchAreaRef = React.createRef();
+  }
+
+  componentDidMount() {
+    const touchArea = this.touchAreaRef.current;
+
+    if (touchArea) {
+      const rotateRegion = new zingtouch.Region(touchArea);
+      const rotateGesture = new zingtouch.Rotate();
+
+      rotateRegion.bind(touchArea, rotateGesture, (e) => {
+        console.log("Rotation Angle: ", e.detail.angle);
+      });
+    } else {
+      console.warn('Touch area element is not available.');
+    }
+  }
+
+  componentWillUnmount() {
+    const touchArea = this.touchAreaRef.current;
+
+    if (touchArea) {
+      const rotateRegion = new zingtouch.Region(touchArea);
+      rotateRegion.unbind();
+    }
+  }
+
+  render() {
+    return (
+      <>
+      <div className={appStyle.app}>
+        <Ipod touchAreaRef={this.touchAreaRef} />
+      </div>
+      </>
+    );
+  }
 }
-
-export default App;
